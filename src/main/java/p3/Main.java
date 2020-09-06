@@ -1,9 +1,6 @@
 package p3;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class Main {
@@ -17,6 +14,13 @@ public class Main {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        AdresDAOPsql adao = new AdresDAOPsql(connection);
+        try {
+            testAdresDAO(adao);
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
+        }
+
         closeConnection();
     }
 
@@ -81,5 +85,46 @@ public class Main {
         System.out.print("\n [Test] Eerst " + rdao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
         rdao.delete(sietske);
         System.out.print(rdao.findAll().size() + " reizigers.\n");
+    }
+
+    private static void testAdresDAO(AdresDAO adao){
+        System.out.println("\n---------- Test AdresDAO -------------");
+
+        // Haal alle reizigers op uit de database
+        List<Adres> adressen = adao.findAll();
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende reizigers:");
+        for (Adres r : adressen) {
+            System.out.println(r);
+        }
+        System.out.println();
+
+//        // Maak een nieuw adres aan en persisteer deze in de database
+        Adres bakerst = new Adres(2,"2143PP","21B","Bakerstreet","London", 2);
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
+        java.sql.Date date = new Date(6-1-1854);
+        Reiziger cumberbatch = new Reiziger(2, "S","","Holmes", date);
+        rdao.save(cumberbatch);
+        System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
+        adao.save(bakerst);
+        adressen = adao.findAll();
+        System.out.println(adressen.size() + " adressen\n");
+
+        rdao.save(cumberbatch);
+        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
+
+        //update en read adres
+        System.out.println("\n[Test] Eerst:\n" + adao.findById(bakerst.getId()));
+        bakerst.setPostcode("1234OK");
+        adao.update(bakerst);
+        System.out.println("\nNa AdresDAOPsql.update(): \n" + adao.findById(bakerst.getId()) + "\n");
+
+        //findbyreiziger
+        System.out.print("[Test] zoeken naar het adres dat hoort bij deze reiziger "+cumberbatch.toString()+":\n");
+        cumberbatch.setAdres(adao.findByReiziger(cumberbatch));
+        System.out.println(cumberbatch.toString());
+//        Delete adres
+        System.out.print("\n [Test] Eerst " + adao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
+        adao.delete(bakerst);
+        System.out.print(adao.findAll().size() + " reizigers.\n");
     }
 }
