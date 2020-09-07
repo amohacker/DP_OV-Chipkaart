@@ -1,0 +1,7 @@
+ALTER TABLE medewerkers
+ADD geslacht CHAR;
+ALTER TABLE medewerkers
+ADD CONSTRAINT m_geslacht_chk CHECK (geslacht='M' OR geslacht='V');
+
+INSERT INTO afdelingen
+VALUES (50, 'ONDERZOEK', 'ZWOLLE');

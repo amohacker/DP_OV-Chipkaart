@@ -65,6 +65,14 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger WHERE reiziger_id = " + id + ";");
             rs.next();
             reiziger = new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"), rs.getString("tussenvoegsel"), rs.getString("achternaam"), rs.getDate("geboortedatum"));
+            AdresDAOPsql adao = new AdresDAOPsql(conn);
+            Adres adres;
+            try {
+                adres = adao.findByReiziger(reiziger);
+                reiziger.setAdres(adres);
+            } catch (SQLException throwables) {
+                return reiziger;
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             return null;
@@ -80,6 +88,14 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger WHERE geboortedatum = '" + datum + "';");
             while (rs.next()) {
                 Reiziger reiziger = new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"), rs.getString("tussenvoegsel"), rs.getString("achternaam"), rs.getDate("geboortedatum"));
+                AdresDAOPsql adao = new AdresDAOPsql(conn);
+                Adres adres;
+                try {
+                    adres = adao.findByReiziger(reiziger);
+                    reiziger.setAdres(adres);
+                } catch (SQLException throwables) {
+
+                }
                 reizigers.add(reiziger);
             }
             return reizigers;
@@ -98,6 +114,13 @@ public class ReizigerDAOPsql implements ReizigerDAO{
             while (rs.next()) {
                 Reiziger reiziger = new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"), rs.getString("tussenvoegsel"), rs.getString("achternaam"), rs.getDate("geboortedatum"));
                 reizigers.add(reiziger);
+                AdresDAOPsql adao = new AdresDAOPsql(conn);
+                Adres adres;
+                try {
+                    adres = adao.findByReiziger(reiziger);
+                    reiziger.setAdres(adres);
+                } catch (SQLException throwables) {
+                }
             }
             return reizigers;
         } catch (SQLException throwables) {

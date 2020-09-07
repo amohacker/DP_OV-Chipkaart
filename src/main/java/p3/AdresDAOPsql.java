@@ -81,9 +81,8 @@ public class AdresDAOPsql implements AdresDAO {
     }
 
     @Override
-    public Adres findByReiziger(Reiziger reiziger) {
+    public Adres findByReiziger(Reiziger reiziger) throws SQLException {
         Adres adres;
-        try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM adres WHERE reiziger_id = " + reiziger.getId() + ";");
             rs.next();
@@ -92,10 +91,6 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getString("huisnummer"), rs.getString("straat"),
                     rs.getString("woonplaats"), rs.getInt("reiziger_id")
             );
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return null;
-        }
         return adres;
     }
 

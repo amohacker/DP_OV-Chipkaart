@@ -120,7 +120,11 @@ public class Main {
 
         //findbyreiziger
         System.out.print("[Test] zoeken naar het adres dat hoort bij deze reiziger "+cumberbatch.toString()+":\n");
-        cumberbatch.setAdres(adao.findByReiziger(cumberbatch));
+        try {
+            cumberbatch.setAdres(adao.findByReiziger(cumberbatch));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println(cumberbatch.toString());
 //        Delete adres
         System.out.print("\n [Test] Eerst " + adao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");

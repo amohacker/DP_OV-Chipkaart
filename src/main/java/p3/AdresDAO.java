@@ -1,5 +1,6 @@
 package p3;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AdresDAO {
@@ -7,6 +8,6 @@ public interface AdresDAO {
     public boolean update(Adres adres);
     public boolean delete(Adres adres);
     public Adres findById(int id);
-    public Adres findByReiziger(Reiziger reiziger);
+    public Adres findByReiziger(Reiziger reiziger) throws SQLException;
     public List<Adres> findAll();
 }

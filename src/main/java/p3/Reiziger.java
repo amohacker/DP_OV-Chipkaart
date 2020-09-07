@@ -42,9 +42,15 @@ public class Reiziger {
     public void setAdres(Adres adres) {this.adres = adres;}
 
     public String toString() {
-        return ("Reiziger {Naam: " + this.getNaam() +
-                " Id: " + getId() +
-                " Geboortedatum: " + this.geboortedatum
-                + ", " + adres + "}");
+        if (adres == null) {
+            return ("Reiziger {Naam: " + this.getNaam() +
+                    " Id: " + getId() +
+                    " Geboortedatum: " + this.geboortedatum + "}");
+        } else {
+            return ("Reiziger {Naam: " + this.getNaam() +
+                    " Id: " + getId() +
+                    " Geboortedatum: " + this.geboortedatum
+                    + ", " + adres + "}");
+        }
     }
 }
