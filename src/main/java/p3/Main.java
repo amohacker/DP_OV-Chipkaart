@@ -127,8 +127,8 @@ public class Main {
         }
         System.out.println(cumberbatch.toString());
 //        Delete adres
-        System.out.print("\n [Test] Eerst " + adao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
+        System.out.print("\n [Test] Eerst " + adao.findAll().size() + " adressen, na AdresDAO.delete() ");
         adao.delete(bakerst);
-        System.out.print(adao.findAll().size() + " reizigers.\n");
+        System.out.print(adao.findAll().size() + " adressen.\n");
     }
 }

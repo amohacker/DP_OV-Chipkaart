@@ -22,6 +22,16 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 reiziger.getTussenvoegsel() + "', '"+
                 reiziger.getAchternaam() + "', '" +
                 reiziger.getGeboortedatum() + "');");
+            if (reiziger.getAdres() != null) {
+                AdresDAOPsql adao = new AdresDAOPsql(conn);
+                Adres adres;
+                try {
+                    adres = adao.findByReiziger(reiziger);
+                    adao.save(reiziger.getAdres());
+                } catch (SQLException throwables) {
+                    adao.update(reiziger.getAdres());
+                }
+            }
         } catch (SQLException throwables) {
             return false;
         }
@@ -40,6 +50,16 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     "', achternaam = '" + reiziger.getAchternaam() +
                     "', geboortedatum = '" + reiziger.getGeboortedatum() +
                     "' WHERE reiziger_id = " + reiziger.getId() + ";");
+            if (reiziger.getAdres() != null) {
+                AdresDAOPsql adao = new AdresDAOPsql(conn);
+                Adres adres;
+                try {
+                    adres = adao.findByReiziger(reiziger);
+                    adao.save(reiziger.getAdres());
+                } catch (SQLException throwables) {
+                    adao.update(reiziger.getAdres());
+                }
+            }
         } catch (SQLException throwables) {
             return false;
         }
@@ -71,7 +91,6 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 adres = adao.findByReiziger(reiziger);
                 reiziger.setAdres(adres);
             } catch (SQLException throwables) {
-                return reiziger;
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

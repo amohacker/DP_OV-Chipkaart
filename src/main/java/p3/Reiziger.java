@@ -30,6 +30,7 @@ public class Reiziger {
     public String getTussenvoegsel() { return  this.tussenvoegsel; }
     public String getAchternaam() { return this.achternaam; }
     public Date getGeboortedatum() { return this.geboortedatum; }
+    public Adres getAdres() {return this.adres;}
 
     public String getNaam() {
         return (this.voorletters + " " + this.tussenvoegsel + " " + this.achternaam);
