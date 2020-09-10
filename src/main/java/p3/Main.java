@@ -65,8 +65,16 @@ public class Main {
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum));
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske);
-        reizigers = rdao.findAll();
+        try {
+            rdao.save(sietske);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
+        try {
+            reizigers = rdao.findAll();
+        } catch (SQLException throwables) {
+            System.out.println("Kon lijst met reizigers niet ophalen");
+        }
         System.out.println(reizigers.size() + " reizigers\n");
 
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
@@ -85,13 +93,39 @@ public class Main {
         System.out.print("\n [Test] Eerst " + rdao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
         rdao.delete(sietske);
         System.out.print(rdao.findAll().size() + " reizigers.\n");
+
+        //Adres tests
+        Adres kruisstraat = new Adres(3, "1423AD","12", "Kruisstraat", "Beverdijk",3);
+        Date date1 = new Date(1999, 01, 1);
+        Reiziger naark = new Reiziger(3, "F", "", "Naark", date1, kruisstraat);
+        System.out.println(naark);
+        try {
+            rdao.save(naark);
+        } catch (SQLException throwables) {
+            System.out.println("kon reiziger niet opslaan");
+        }
+        System.out.println("Save reiziger met adres "+rdao.findById(naark.getId()));
+        int adresid = naark.getAdres().getId();
+        naark.getAdres().setHuisnummer("199");
+        try {
+            rdao.update(naark);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("Update reiziger met adres "+rdao.findById(naark.getId()));
+//        rdao.delete(naark);
     }
 
     private static void testAdresDAO(AdresDAO adao){
         System.out.println("\n---------- Test AdresDAO -------------");
 
         // Haal alle reizigers op uit de database
-        List<Adres> adressen = adao.findAll();
+        List<Adres> adressen = null;
+        try {
+            adressen = adao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende reizigers:");
         for (Adres r : adressen) {
             System.out.println(r);
@@ -103,20 +137,48 @@ public class Main {
         ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
         java.sql.Date date = new Date(6-1-1854);
         Reiziger cumberbatch = new Reiziger(2, "S","","Holmes", date);
-        rdao.save(cumberbatch);
+        try {
+            rdao.save(cumberbatch);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
-        adao.save(bakerst);
-        adressen = adao.findAll();
+        try {
+            adao.save(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            adressen = adao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println(adressen.size() + " adressen\n");
 
-        rdao.save(cumberbatch);
+        try {
+            rdao.save(cumberbatch);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
 
         //update en read adres
-        System.out.println("\n[Test] Eerst:\n" + adao.findById(bakerst.getId()));
+        try {
+            System.out.println("\n[Test] Eerst:\n" + adao.findById(bakerst.getId()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         bakerst.setPostcode("1234OK");
-        adao.update(bakerst);
-        System.out.println("\nNa AdresDAOPsql.update(): \n" + adao.findById(bakerst.getId()) + "\n");
+        try {
+            adao.update(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.println("\nNa AdresDAOPsql.update(): \n" + adao.findById(bakerst.getId()) + "\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         //findbyreiziger
         System.out.print("[Test] zoeken naar het adres dat hoort bij deze reiziger "+cumberbatch.toString()+":\n");
@@ -127,8 +189,20 @@ public class Main {
         }
         System.out.println(cumberbatch.toString());
 //        Delete adres
-        System.out.print("\n [Test] Eerst " + adao.findAll().size() + " adressen, na AdresDAO.delete() ");
-        adao.delete(bakerst);
-        System.out.print(adao.findAll().size() + " adressen.\n");
+        try {
+            System.out.print("\n [Test] Eerst " + adao.findAll().size() + " adressen, na AdresDAO.delete() ");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            adao.delete(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.print(adao.findAll().size() + " adressen.\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

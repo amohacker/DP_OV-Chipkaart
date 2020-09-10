@@ -12,37 +12,33 @@ public class ReizigerDAOPsql implements ReizigerDAO{
     }
 
     @Override
-    public boolean save(Reiziger reiziger) {
-        try {
-            Statement st = conn.createStatement();
-            st.executeQuery("INSERT INTO reiziger " +
+    public boolean save(Reiziger reiziger) throws SQLException {
+        Statement st = conn.createStatement();
+        st.executeUpdate("INSERT INTO reiziger " +
                 "VALUES (" +
-                reiziger.getId()+", '" +
+                reiziger.getId() + ", '" +
                 reiziger.getVoorletters() + "', '" +
-                reiziger.getTussenvoegsel() + "', '"+
+                reiziger.getTussenvoegsel() + "', '" +
                 reiziger.getAchternaam() + "', '" +
                 reiziger.getGeboortedatum() + "');");
-            if (reiziger.getAdres() != null) {
-                AdresDAOPsql adao = new AdresDAOPsql(conn);
-                Adres adres;
-                try {
-                    adres = adao.findByReiziger(reiziger);
-                    adao.save(reiziger.getAdres());
-                } catch (SQLException throwables) {
-                    adao.update(reiziger.getAdres());
-                }
+        st.close();
+        if (reiziger.getAdres() != null) {
+            AdresDAOPsql adao = new AdresDAOPsql(conn);
+            Adres adres;
+            try {
+                adres = adao.findByReiziger(reiziger);
+                adao.save(reiziger.getAdres());
+            } catch (SQLException throwables) {
+                adao.update(reiziger.getAdres());
             }
-        } catch (SQLException throwables) {
-            return false;
         }
-        return true;
+        return false;
     }
 
     @Override
-    public boolean update(Reiziger reiziger) {
-        try {
+    public boolean update(Reiziger reiziger) throws SQLException{
             Statement st = conn.createStatement();
-            st.executeQuery("UPDATE reiziger " +
+            st.executeUpdate("UPDATE reiziger " +
                     "SET " +
                     "reiziger_id = " + reiziger.getId() +
                     ", voorletters = '" + reiziger.getVoorletters() +
@@ -50,6 +46,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     "', achternaam = '" + reiziger.getAchternaam() +
                     "', geboortedatum = '" + reiziger.getGeboortedatum() +
                     "' WHERE reiziger_id = " + reiziger.getId() + ";");
+            st.close();
             if (reiziger.getAdres() != null) {
                 AdresDAOPsql adao = new AdresDAOPsql(conn);
                 Adres adres;
@@ -60,49 +57,47 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     adao.update(reiziger.getAdres());
                 }
             }
-        } catch (SQLException throwables) {
             return false;
         }
-        return true;
-    }
 
     @Override
-    public boolean delete(Reiziger reiziger) {
-        try {
+    public boolean delete(Reiziger reiziger) throws SQLException {
             Statement st = conn.createStatement();
-            st.executeQuery("DELETE FROM reiziger WHERE reiziger_id = " + reiziger.getId() + " ;");
-        } catch (SQLException throwables) {
-            return false;
+            st.executeUpdate("DELETE FROM reiziger WHERE reiziger_id = " + reiziger.getId() + " ;");
+            st.close();
+            if (reiziger.getAdres() != null) {
+                AdresDAOPsql adao = new AdresDAOPsql(conn);
+                Adres adres;
+                try {
+                    adres = adao.findByReiziger(reiziger);
+                    adao.delete(reiziger.getAdres());
+                } catch (SQLException throwables) {
+                }
         }
-        return true;
+        return false;
     }
 
     @Override
-    public Reiziger findById(int id) {
+    public Reiziger findById(int id) throws SQLException{
         Reiziger reiziger;
-        try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger WHERE reiziger_id = " + id + ";");
             rs.next();
             reiziger = new Reiziger(rs.getInt("reiziger_id"), rs.getString("voorletters"), rs.getString("tussenvoegsel"), rs.getString("achternaam"), rs.getDate("geboortedatum"));
             AdresDAOPsql adao = new AdresDAOPsql(conn);
             Adres adres;
+            st.close();
             try {
                 adres = adao.findByReiziger(reiziger);
                 reiziger.setAdres(adres);
             } catch (SQLException throwables) {
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return null;
-        }
         return reiziger;
     }
 
     @Override
-    public List<Reiziger> findByGbdatum(String datum) {
+    public List<Reiziger> findByGbdatum(String datum) throws SQLException{
         List<Reiziger> reizigers = new ArrayList<>();
-        try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger WHERE geboortedatum = '" + datum + "';");
             while (rs.next()) {
@@ -113,21 +108,16 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                     adres = adao.findByReiziger(reiziger);
                     reiziger.setAdres(adres);
                 } catch (SQLException throwables) {
-
                 }
                 reizigers.add(reiziger);
             }
+            st.close();
             return reizigers;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return null;
-        }
     }
 
     @Override
-    public List<Reiziger> findAll() {
+    public List<Reiziger> findAll() throws SQLException{
         List<Reiziger> reizigers = new ArrayList<>();
-        try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT * FROM reiziger;");
             while (rs.next()) {
@@ -141,10 +131,7 @@ public class ReizigerDAOPsql implements ReizigerDAO{
                 } catch (SQLException throwables) {
                 }
             }
+            st.close();
             return reizigers;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            return null;
-        }
     }
 }
