@@ -1,0 +1,71 @@
+select medewerkers.naam, afdelingen.naam
+from medewerkers
+inner join afdelingen on afd=anr;
+
+
+select medewerkers.naam, afdelingen.naam
+from medewerkers
+inner join afdelingen on afd=anr
+where afdelingen.naam='OPLEIDINGEN';
+
+
+select begindatum, omschrijving
+from uitvoeringen
+inner join cursussen on cursus=code;
+
+
+select begindatum, omschrijving
+from uitvoeringen
+inner join cursussen on cursus=code
+order by begindatum;
+
+
+select inschrijvingen.cursus, cursist, inschrijvingen.begindatum, locatie
+from inschrijvingen
+inner join uitvoeringen on inschrijvingen.cursus=uitvoeringen.cursus and inschrijvingen.begindatum=uitvoeringen.begindatum
+
+
+select inschrijvingen.cursus, cursist, inschrijvingen.begindatum, locatie, cursussen.omschrijving
+from inschrijvingen
+inner join uitvoeringen on inschrijvingen.cursus=uitvoeringen.cursus and inschrijvingen.begindatum=uitvoeringen.begindatum
+inner join cursussen on inschrijvingen.cursus=cursussen.code
+
+
+select medewerkers.naam as medewerker_naam, cheftabel.naam as chef_naam
+from medewerkers
+inner join medewerkers as cheftabel on medewerkers.chef=cheftabel.mnr;
+
+
+----
+
+
+select cursussen.omschrijving, uitvoeringen.begindatum
+from cursussen
+left join uitvoeringen on cursussen.code=uitvoeringen.cursus;
+
+
+select cursussen.omschrijving, uitvoeringen.begindatum
+from uitvoeringen
+right join cursussen on cursussen.code=uitvoeringen.cursus;
+
+
+select cursussen.omschrijving, uitvoeringen.begindatum
+from cursussen
+left join uitvoeringen on cursussen.code=uitvoeringen.cursus
+order by cursussen.omschrijving;
+
+
+select cursussen.omschrijving, uitvoeringen.begindatum, uitvoeringen.locatie
+from cursussen
+left join uitvoeringen on cursussen.code=uitvoeringen.cursus
+where uitvoeringen.locatie='DE MEERN'
+order by cursussen.omschrijving;
+
+
+select cursussen.omschrijving, uitvoeringen.begindatum
+from cursussen
+left join uitvoeringen on cursussen.code=uitvoeringen.cursus
+where uitvoeringen.begindatum is null;
+
+
+select null
