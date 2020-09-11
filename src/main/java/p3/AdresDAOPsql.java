@@ -20,7 +20,7 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public boolean save(Adres adres) throws SQLException {
             Statement st = conn.createStatement();
-            st.executeQuery("INSERT INTO adres " +
+            st.executeUpdate("INSERT INTO adres " +
                     "VALUES (" +
                     adres.getId() + ", '" +
                     adres.getPostcode() + "', '" +
@@ -35,7 +35,7 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public boolean update(Adres adres) throws SQLException {
             Statement st = conn.createStatement();
-            st.executeQuery("UPDATE adres " +
+            st.executeUpdate("UPDATE adres " +
                     "SET " +
                     "adres_id = " + adres.getId() +
                     ", postcode = '" + adres.getPostcode() +
@@ -51,7 +51,7 @@ public class AdresDAOPsql implements AdresDAO {
     @Override
     public boolean delete(Adres adres) throws SQLException {
             Statement st = conn.createStatement();
-            st.executeQuery("DELETE FROM adres WHERE adres_id = " + adres.getId() + " ;");
+            st.executeUpdate("DELETE FROM adres WHERE adres_id = " + adres.getId() + " ;");
             st.close();
         return true;
     }
