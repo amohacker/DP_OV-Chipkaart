@@ -23,6 +23,8 @@ public class Main {
         } catch (Exception throwables) {
             throwables.printStackTrace();
         }
+        OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(connection);
+        testOVChipkaaartDAO(odao);
 
         closeConnection();
     }
@@ -68,17 +70,25 @@ public class Main {
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum));
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rdao.save(sietske);
-        reizigers = rdao.findAll();
+        try {
+            rdao.save(sietske);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
+        try {
+            reizigers = rdao.findAll();
+        } catch (SQLException throwables) {
+            System.out.println("Kon lijst met reizigers niet ophalen");
+        }
         System.out.println(reizigers.size() + " reizigers\n");
 
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
 
         //update en read reiziger
-        System.out.println("\n[Test] Eerst:\n" + rdao.findById(sietske.id));
+        System.out.println("\n[Test] Eerst:\n" + rdao.findById(sietske.getId()));
         sietske.setAchternaam("Bakker");
         rdao.update(sietske);
-        System.out.println("\nNa ReizigerDAOPsql.update(): \n" + rdao.findById(sietske.id) + "\n");
+        System.out.println("\nNa ReizigerDAOPsql.update(): \n" + rdao.findById(sietske.getId()) + "\n");
 
         //findbygbdatum
         System.out.println("[Test] zoeken na alle reizigers met de geboortedatum "+sietske.getGeboortedatum()+":\n");
@@ -88,13 +98,39 @@ public class Main {
         System.out.print("\n [Test] Eerst " + rdao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
         rdao.delete(sietske);
         System.out.print(rdao.findAll().size() + " reizigers.\n");
+
+        //Adres tests
+        Adres kruisstraat = new Adres(3, "1423AD","12", "Kruisstraat", "Beverdijk",3);
+        Date date1 = new Date(1999, 01, 1);
+        Reiziger naark = new Reiziger(3, "F", "", "Naark", date1, kruisstraat);
+        System.out.println(naark);
+        try {
+            rdao.save(naark);
+        } catch (SQLException throwables) {
+            System.out.println("kon reiziger niet opslaan");
+        }
+        System.out.println("Save reiziger met adres "+rdao.findById(naark.getId()));
+        int adresid = naark.getAdres().getId();
+        naark.getAdres().setHuisnummer("199");
+        try {
+            rdao.update(naark);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("Update reiziger met adres "+rdao.findById(naark.getId()));
+//        rdao.delete(naark);
     }
 
     private static void testAdresDAO(AdresDAO adao){
         System.out.println("\n---------- Test AdresDAO -------------");
 
         // Haal alle reizigers op uit de database
-        List<Adres> adressen = adao.findAll();
+        List<Adres> adressen = null;
+        try {
+            adressen = adao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende reizigers:");
         for (Adres r : adressen) {
             System.out.println(r);
@@ -106,28 +142,169 @@ public class Main {
         ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
         Date date = new Date(6-1-1854);
         Reiziger cumberbatch = new Reiziger(2, "S","","Holmes", date);
-        rdao.save(cumberbatch);
+        try {
+            rdao.save(cumberbatch);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
-        adao.save(bakerst);
-        adressen = adao.findAll();
+        try {
+            adao.save(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            adressen = adao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println(adressen.size() + " adressen\n");
 
-        rdao.save(cumberbatch);
+        try {
+            rdao.save(cumberbatch);
+        } catch (SQLException throwables) {
+            System.out.println("Kon reiziger niet opslaan");
+        }
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
 
         //update en read adres
-        System.out.println("\n[Test] Eerst:\n" + adao.findById(bakerst.getId()));
+        try {
+            System.out.println("\n[Test] Eerst:\n" + adao.findById(bakerst.getId()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         bakerst.setPostcode("1234OK");
-        adao.update(bakerst);
-        System.out.println("\nNa AdresDAOPsql.update(): \n" + adao.findById(bakerst.getId()) + "\n");
+        try {
+            adao.update(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.println("\nNa AdresDAOPsql.update(): \n" + adao.findById(bakerst.getId()) + "\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         //findbyreiziger
         System.out.print("[Test] zoeken naar het adres dat hoort bij deze reiziger "+cumberbatch.toString()+":\n");
-        cumberbatch.setAdres(adao.findByReiziger(cumberbatch));
+        try {
+            cumberbatch.setAdres(adao.findByReiziger(cumberbatch));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         System.out.println(cumberbatch.toString());
 //        Delete adres
-        System.out.print("\n [Test] Eerst " + adao.findAll().size() + " reizigers, na ReizigerDAO.delete() ");
-        adao.delete(bakerst);
-        System.out.print(adao.findAll().size() + " reizigers.\n");
+        try {
+            System.out.print("\n [Test] Eerst " + adao.findAll().size() + " adressen, na AdresDAO.delete() ");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            adao.delete(bakerst);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.print(adao.findAll().size() + " adressen.\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private static void testOVChipkaaartDAO(OVChipkaartDAO odao) {
+
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+        // Haal alle OVchipkaarten op uit de database
+        List<OVChipkaart> ovkaarten = null;
+        try {
+            ovkaarten = odao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende OVChipkaarten:");
+        for (OVChipkaart r : ovkaarten) {
+            System.out.println(r);
+        }
+        System.out.println();
+        // Sla een OVChipkaart op in de database
+        Date date = new Date(125, 05, 22);
+        OVChipkaart batchov = new OVChipkaart(2, date, 2, 120, 2);
+        System.out.print("[Test] Eerst " + ovkaarten.size() + " OVChipkaarten, na OVChipkaartDAO.save() ");
+        try {
+            odao.save(batchov);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            ovkaarten = odao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println(ovkaarten.size() + " OVChipkaarten\n");
+
+        //update en read OVChipkaart
+        try {
+            System.out.println("[Test] Eerst:\n" + odao.findById(batchov.getKaartNummer()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        batchov.setSaldo(100);
+        try {
+            odao.update(batchov);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.println("\nNa OVChipkaartDAO.update(): \n" + odao.findById(batchov.getKaartNummer()) + "\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection);
+
+        Reiziger cumberbatch = null;
+        try {
+            cumberbatch = rdao.findById(2);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        //findbyReiziger
+        System.out.print("[Test] zoeken naar de OVChipkaart dat hoort bij deze reiziger "+cumberbatch.toString()+":\n");
+        try {
+            System.out.println(odao.findByReiziger(cumberbatch));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        batchov.setKlasse(1);
+        cumberbatch.addOVChipKaart(batchov);
+        try {
+            rdao.update(cumberbatch);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        System.out.println("\nUpdaten van OVChipkaarten opgeslagen in reiziger object :");
+        try {
+            System.out.println(rdao.findById(cumberbatch.getId()).getOVKaarten());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        //        Delete OVChipkaart
+        try {
+            System.out.print("\n[Test] Eerst " + odao.findAll().size() + " OVChipkaarten, na OVChipkaartDAO.delete() ");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            rdao.delete(cumberbatch);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.print(odao.findAll().size() + " adressen.\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }
