@@ -22,6 +22,16 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 ovKaart.getKlasse() + "', '" +
                 ovKaart.getSaldo() + "', '" +
                 ovKaart.getReizigerId() + "');");
+        OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(conn);
+        if (ovKaart.getProducten() != null) {
+            for (Product p : ovKaart.getProducten()) {
+                try {
+                    st.executeUpdate("INSERT INTO ov_chipkaart_product VALUES (" +
+                            ovKaart.getKaartNummer() + ", " + p.getId() + ")");
+                } catch (SQLException throwables) {
+                }
+            }
+        }
         st.close();
         return true;
     }
@@ -37,6 +47,18 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 ", saldo = " + ovKaart.getSaldo() +
                 ", reiziger_id = " + ovKaart.getReizigerId() +
                 " WHERE kaart_nummer = " + ovKaart.getKaartNummer() + ";");
+
+        st.executeUpdate("DELETE FROM ov_chipkaart_product where kaart_nummer = " + ovKaart.getKaartNummer() + " ;");
+        if (ovKaart.getProducten() != null) {
+            for (Product p : ovKaart.getProducten()) {
+                try {
+                    st.executeUpdate("INSERT INTO ov_chipkaart_product VALUES (" +
+                            ovKaart.getKaartNummer() + ", " + p.getId() + ")");
+                } catch (SQLException throwables) {
+                }
+            }
+        }
+
         st.close();
         return true;
     }
@@ -44,6 +66,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     @Override
     public boolean delete(OVChipkaart ovKaart) throws SQLException {
         Statement st = conn.createStatement();
+        st.executeUpdate("DELETE FROM ov_chipkaart_product where kaart_nummer = " + ovKaart.getKaartNummer() + " ;");
         st.executeUpdate("DELETE FROM ov_chipkaart WHERE kaart_nummer = " + ovKaart.getKaartNummer() + " ;");
         st.close();
         return true;
@@ -51,12 +74,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
     @Override
     public OVChipkaart findById(int id) throws SQLException {
-        OVChipkaart ovKaart;
         Statement st = conn.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM ov_chipkaart WHERE kaart_nummer = " + id + ";");
+        ResultSet rs = st.executeQuery("SELECT * FROM ov_chipkaart WHERE kaart_nummer = " + id + " ;");
         rs.next();
-        ovKaart = new OVChipkaart(rs.getInt("kaart_nummer"), rs.getDate("geldig_tot"), rs.getInt("klasse"), rs.getInt("saldo"), rs.getInt("reiziger_id"));
+        OVChipkaart ovKaart = new OVChipkaart(rs.getInt("kaart_nummer"), rs.getDate("geldig_tot"), rs.getInt("klasse"), rs.getInt("saldo"), rs.getInt("reiziger_id"));
         st.close();
+        ProductDAOPsql pdao = new ProductDAOPsql(conn);
+        ovKaart.setProducten(pdao.findByOVChipkaart(ovKaart));
         return ovKaart;
     }
 
@@ -67,6 +91,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         ResultSet rs = st.executeQuery("SELECT * FROM ov_chipkaart WHERE reiziger_id = " + reiziger.getId() + ";");
         while (rs.next()) {
             OVChipkaart ovKaart = new OVChipkaart(rs.getInt("kaart_nummer"), rs.getDate("geldig_tot"), rs.getInt("klasse"), rs.getInt("saldo"), rs.getInt("reiziger_id"));
+            ProductDAOPsql pdao = new ProductDAOPsql(conn);
+            ovKaart.setProducten(pdao.findByOVChipkaart(ovKaart));
             ovKaarten.add(ovKaart);
         }
         st.close();
@@ -80,6 +106,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         ResultSet rs = st.executeQuery("SELECT * FROM ov_chipkaart;");
         while (rs.next()) {
             OVChipkaart ovKaart = new OVChipkaart(rs.getInt("kaart_nummer"), rs.getDate("geldig_tot"), rs.getInt("klasse"), rs.getInt("saldo"), rs.getInt("reiziger_id"));
+            ProductDAOPsql pdao = new ProductDAOPsql(conn);
+            ovKaart.setProducten(pdao.findByOVChipkaart(ovKaart));
             ovKaarten.add(ovKaart);
         }
         st.close();

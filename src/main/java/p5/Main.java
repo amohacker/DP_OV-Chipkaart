@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -25,6 +26,8 @@ public class Main {
         }
         OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(connection);
         testOVChipkaaartDAO(odao);
+        ProductDAOPsql pdao = new ProductDAOPsql(connection);
+        testProductDAO(pdao);
 
         closeConnection();
     }
@@ -303,6 +306,107 @@ public class Main {
         }
         try {
             System.out.print(odao.findAll().size() + " adressen.\n");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private static void testProductDAO(ProductDAO pdao) {
+        System.out.println("\n---------- Test ProductDAO -------------");
+        List<Product> producten = new ArrayList<>();
+        try {
+            producten = pdao.findAll();
+        System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product r : producten) {
+            System.out.println(r);
+        }
+        System.out.println();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        Product product = new Product(7, "Fast", "Only the fastest of trains", 10);
+
+        System.out.print("[Test] Eerst " + producten.size() + " producten, na ProductDAO.save() ");
+        try {
+            pdao.save(product);
+        } catch (SQLException throwables) {
+            System.out.println("Kon product niet opslaan");
+        }
+        try {
+            producten = pdao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.out.println("Kon lijst met producten niet ophalen");
+        }
+        System.out.println(producten.size() + " producten\n");
+
+        product.setBeschrijving("Alleen de snelste treinen");
+        try {
+            System.out.print("[Test] Eerst " + pdao.findById(product.getId()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            pdao.update(product);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            System.out.println(" dan " + pdao.findById(product.getId()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        System.out.print("[Test] Eerst " + producten.size() + " producten, na ProductDAO.delete() ");
+        try {
+            pdao.delete(product);
+        } catch (SQLException throwables) {
+            System.out.println("Kon product niet verwijderen");
+        }
+        try {
+            producten = pdao.findAll();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            System.out.println("Kon lijst met producten niet ophalen");
+        }
+        System.out.println(producten.size() + " producten\n");
+        Date date = new Date(122, 11, 03);
+        OVChipkaart ov = new OVChipkaart(16, date, 1, 100, 5);
+        ov.addProduct(product);
+        OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(connection);
+        System.out.println(ov.getProducten());
+        System.out.println(product.getOvChipkaarten());
+        try {
+            odao.save(ov);
+        } catch (SQLException throwables) {
+            System.out.println("kon ov niet opslaan");
+        }
+        try {
+            pdao.save(product);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        OVChipkaart ov2 = null;
+        try {
+            ov2 = odao.findById(18326);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        ov2.addProduct(product);
+        try {
+            pdao.update(product);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        try {
+            System.out.println(pdao.findByOVChipkaart(ov2));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        try {
+            System.out.println(odao.findById(18326).getProducten());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
