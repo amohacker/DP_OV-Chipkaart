@@ -25,10 +25,12 @@ inner join afdelingen on medewerkers.afd=afdelingen.anr;
 
 -- opdracht 5
 -- met de andere methode om te demonstreren dat het kan
-select (select medewerkers.naam from medewerkers where medewerkers.mnr=inschrijvingen.cursist)
+select medewerkers.naam
 from inschrijvingen
+inner join medewerkers on inschrijvingen.cursist=medewerkers.mnr
 where inschrijvingen.cursus='S02' and inschrijvingen.begindatum='12-4-2019';
 
 -- opdracht 6
-select p.naam, (select schalen.toelage from schalen where schalen.ondergrens<=p.maandsal and schalen.bovengrens>=p.maandsal)
+select p.naam, schalen.toelage
 from medewerkers as p
+inner join schalen on ondergrens<p.maandsal and bovengrens>p.maandsal;
