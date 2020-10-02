@@ -29,11 +29,12 @@ public class ProductDAOPsql implements ProductDAO {
                 product.getBeschrijving() + "', '" +
                 product.getPrijs() + "');");
         OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(conn);
+        st.executeUpdate("DELETE FROM ov_chipkaart_product where product_nummer = " + product.getId() + " ;");
         if (product.getOvChipkaarten() != null) {
-            for (OVChipkaart ov : product.getOvChipkaarten()) {
+            for (int ov : product.getOvChipkaarten()) {
                 try {
                     st.executeUpdate("INSERT INTO ov_chipkaart_product VALUES (" +
-                            ov.getKaartNummer() + ", " + product.getId() + ")");
+                            ov + ", " + product.getId() + ")");
                 } catch (SQLException throwables) {
                 }
             }
@@ -54,10 +55,10 @@ public class ProductDAOPsql implements ProductDAO {
                 "' WHERE product_nummer = " + product.getId() + ";");
         st.executeUpdate("DELETE FROM ov_chipkaart_product where product_nummer = " + product.getId() + " ;");
         if (product.getOvChipkaarten() != null) {
-            for (OVChipkaart ov : product.getOvChipkaarten()) {
+            for (int ov : product.getOvChipkaarten()) {
                 try {
                     st.executeUpdate("INSERT INTO ov_chipkaart_product VALUES (" +
-                            ov.getKaartNummer() + ", " + product.getId() + ")");
+                            ov + ", " + product.getId() + ")");
                 } catch (SQLException throwables) {
                 }
             }
@@ -106,6 +107,11 @@ public class ProductDAOPsql implements ProductDAO {
         ResultSet rs = st.executeQuery("SELECT * FROM product;");
         while (rs.next()) {
             Product product = new Product(rs.getInt("product_nummer"), rs.getString("naam"), rs.getString("beschrijving"), rs.getInt("prijs"));
+            Statement st2 = conn.createStatement();
+            ResultSet rs2 = st2.executeQuery("SELECT kaart_nummer FROM ov_chipkaart_product WHERE product_nummer="+product.getId()+";");
+            while (rs2.next()) {
+                product.addovChipkaart(rs2.getInt("kaart_nummer"));
+            }
             producten.add(product);
         }
         st.close();

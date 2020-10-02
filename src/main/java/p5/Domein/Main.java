@@ -412,5 +412,15 @@ public class Main {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        try {
+            System.out.println("Findall producten: ");
+            List<Product> productenlijst = pdao.findAll();
+            for (Product p: productenlijst) {
+                System.out.println(p + " " + p.getOvChipkaarten());
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

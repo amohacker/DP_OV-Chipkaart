@@ -10,7 +10,7 @@ public class Product {
     private String naam;
     private String beschrijving;
     private int prijs;
-    private List<OVChipkaart> ovChipkaarten;
+    private List<Integer> ovChipkaarten;
 
     public Product (int product_nummer, String naam, String beschrijving, int prijs) {
         this.product_nummer = product_nummer;
@@ -32,12 +32,30 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public void setOvChipkaarten(List<OVChipkaart> ovChipkaarten) {
+    public void setOvChipkaarten(List<Integer> ovChipkaarten) {
         this.ovChipkaarten = ovChipkaarten;
     }
 
     public void addovChipkaart(OVChipkaart ovChipkaart) {
+        this.ovChipkaarten.add(ovChipkaart.getKaartNummer());
+    }
+
+    public void addovChipkaart(int ovChipkaart) {
         this.ovChipkaarten.add(ovChipkaart);
+    }
+
+    public void removeovChipkaart(OVChipkaart ovChipkaart) {
+    this.removeovChipkaart(ovChipkaart.getKaartNummer());
+    }
+
+    public void removeovChipkaart(int ovChipkaart) {
+        int i = 0;
+        for (int o: getOvChipkaarten()) {
+            if (o==ovChipkaart) {
+                this.ovChipkaarten.remove(i);
+            }
+            i++;
+        }
     }
 
     public int getId() {
@@ -56,7 +74,7 @@ public class Product {
         return prijs;
     }
 
-    public List<OVChipkaart> getOvChipkaarten() {
+    public List<Integer> getOvChipkaarten() {
         return this.ovChipkaarten;
     }
 
@@ -67,6 +85,6 @@ public class Product {
                 ", naam='" + naam + '\'' +
                 ", beschrijving='" + beschrijving + '\'' +
                 ", prijs=" + prijs +
-                '}';
+                "}";
     }
 }

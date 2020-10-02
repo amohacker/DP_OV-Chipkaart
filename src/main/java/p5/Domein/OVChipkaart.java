@@ -35,6 +35,10 @@ public class OVChipkaart {
         product.addovChipkaart(this);
     }
 
+    public void removeProduct(Product product) {
+        producten.remove(product);
+    }
+
     public int getKaartNummer() { return kaart_nummer; }
     public Date getGeldigTot() { return geldig_tot; }
     public int getKlasse() { return klasse; }
@@ -53,6 +57,7 @@ public class OVChipkaart {
                 ", klasse= " + klasse +
                 ", saldo= " + saldo +
                 ", reiziger id= " + reiziger_id +
+                ", producten= " + getProducten() +
                 '}';
     }
 }
