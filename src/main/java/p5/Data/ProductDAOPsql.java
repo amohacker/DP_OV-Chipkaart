@@ -1,4 +1,9 @@
-package p5;
+package p5.Data;
+
+import p5.Data.OVChipkaartDAOPsql;
+import p5.Data.ProductDAO;
+import p5.Domein.OVChipkaart;
+import p5.Domein.Product;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -7,7 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAOPsql implements ProductDAO{
+public class ProductDAOPsql implements ProductDAO {
     private Connection conn;
 
     public ProductDAOPsql(Connection conn){

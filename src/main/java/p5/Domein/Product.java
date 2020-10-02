@@ -1,4 +1,6 @@
-package p5;
+package p5.Domein;
+
+import p5.Domein.OVChipkaart;
 
 import java.util.ArrayList;
 import java.util.List;

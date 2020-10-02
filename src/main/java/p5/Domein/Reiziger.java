@@ -1,5 +1,8 @@
-package p5;
+package p5.Domein;
 
+
+import p5.Domein.Adres;
+import p5.Domein.OVChipkaart;
 
 import java.sql.Date;
 import java.util.List;

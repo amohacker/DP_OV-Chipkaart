@@ -1,4 +1,4 @@
-package p5;
+package p5.Domein;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class OVChipkaart {
     private int reiziger_id;
     private List<Product> producten;
 
-    OVChipkaart(int kaartNummer, Date geldigTot, int klasse, int saldo, int reizigerId){
+    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, int saldo, int reizigerId){
         this.kaart_nummer = kaartNummer;
         this.geldig_tot = geldigTot;
         this.klasse = klasse;

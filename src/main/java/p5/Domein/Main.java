@@ -1,4 +1,6 @@
-package p5;
+package p5.Domein;
+
+import p5.Data.*;
 
 import java.sql.Connection;
 import java.sql.Date;

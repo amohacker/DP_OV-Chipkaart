@@ -1,4 +1,11 @@
-package p5;
+package p5.Data;
+
+import p5.Data.AdresDAOPsql;
+import p5.Data.OVChipkaartDAOPsql;
+import p5.Data.ReizigerDAO;
+import p5.Domein.Adres;
+import p5.Domein.OVChipkaart;
+import p5.Domein.Reiziger;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

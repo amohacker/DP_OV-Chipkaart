@@ -1,4 +1,8 @@
-package p5;
+package p5.Data;
+
+import p5.Domein.OVChipkaart;
+import p5.Domein.Product;
+import p5.Domein.Reiziger;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

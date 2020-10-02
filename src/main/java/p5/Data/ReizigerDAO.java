@@ -1,4 +1,6 @@
-package p5;
+package p5.Data;
+
+import p5.Domein.Reiziger;
 
 import java.sql.SQLException;
 import java.util.List;
